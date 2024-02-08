@@ -40,6 +40,7 @@ public class UserService {
     PagedResourcesAssembler<UserDTO> assembler;
 
 
+
     @Transactional(readOnly = true)
     public PagedModel<EntityModel<UserDTO>> findAll(Pageable pageable) {
         logger.info("Buscando todos os usuários");
@@ -56,6 +57,16 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public UserDTO findByEmail(String email) {
+         var userEntity = repository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                 .map(mapper)
+                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado."));
+         userEntity.add(linkTo(methodOn(UserController.class).findById(userEntity.getId())).withSelfRel());
+
+         return userEntity;
+    }
+
+    @Transactional(readOnly = true)
     public UserDTO findById(String id) {
         logger.info("Buscando usuário de id: " + id);
         var user = repository.findById(id)
@@ -67,16 +78,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO update(UserUpdateDTO request) {
+    public UserDTO update(UserUpdateDTO request, UserDTO loggedUser) {
         userAlreadyRegistered(request);
         logger.info("Atualizando usuario");
-        User userEntity = repository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado."));
 
         var userExisting = repository.findById(request.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado para ser atualizado."));
 
-        checkPermission(userEntity, request);
+        checkPermission(loggedUser, request);
 
         var user = new User();
 
@@ -108,7 +117,7 @@ public class UserService {
         }
 
 
-        return mapper.apply(repository.saveAndFlush(user))
+        return mapper.apply(repository.save(user))
                 .add(linkTo(methodOn(UserController.class).findById(request.getId())).withSelfRel());
     }
 
@@ -130,7 +139,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    private void checkPermission(User userEntity, UserUpdateDTO request) {
+    private void checkPermission(UserDTO userEntity, UserUpdateDTO request) {
         userEntity.getPermissions().forEach(u -> {
             if (!request.getId().equals(userEntity.getId()) && !u.getDescription().equals("ADMIN"))
                 throw new AccessDeniedGenericException("Você não pode atualizar outro usuário!");

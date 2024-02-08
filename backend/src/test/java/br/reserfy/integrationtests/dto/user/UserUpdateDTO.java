@@ -1,32 +1,17 @@
-package br.reserfy.domain.dto.user;
+package br.reserfy.integrationtests.dto.user;
 
 
 import br.reserfy.domain.entity.Permission;
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.util.List;
 
-public class UserUpdateDTO extends RepresentationModel<UserUpdateDTO> implements Serializable {
-    @Schema(type = "string", example = "08db0ea8-47fc-4bc0-8d00-3c02c3352785")
-    @NotBlank(message = "O campo [id] é obrigatório.")
+public class UserUpdateDTO implements Serializable {
     private String id;
-    @Schema(type = "string", example = "John")
-    @NotBlank(message = "O campo [firstname] é obrigatório.")
     private String firstname;
-    @Schema(type = "string", example = "Doe")
-    @NotBlank(message = "O campo [lastname] é obrigatório.")
     private String lastname;
-    @Schema(type = "string", example = "johndoe@gmail.com")
-    @NotBlank(message = "O campo [email] é obrigatório.")
-    @Email(message = "Digite um e-mail válido.")
     private String email;
-    @Schema(type = "string", example = "!Password#")
     private String password;
-    @Schema(type = "array", example = "[ADMIN, USER]")
     private List<Permission> permissions;
 
     public UserUpdateDTO() {

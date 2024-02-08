@@ -22,12 +22,16 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(value = "/api/user/v1")
 @Tag(description = "Usuários da aplicação", name = "Usuários")
 public class UserController {
+    private final Logger logger = Logger.getLogger(UserController.class.getName());
     @Autowired
     private UserService service;
 
@@ -56,7 +60,7 @@ public class UserController {
     ) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "username"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, "firstname"));
         return ResponseEntity.ok(service.findAll(pageable));
     }
 
@@ -78,6 +82,8 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @GetMapping(value = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UserDTO> findById(@PathVariable String id) {
+        logger.info("Buscando usuário de id: " + id);
+
         return ResponseEntity.ok().body(service.findById(id));
     }
 
@@ -107,7 +113,8 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @PutMapping(produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<UserDTO> udpdate(@Valid @RequestBody UserUpdateDTO user) {
-        return ResponseEntity.ok().body(service.update(user));
+        var userEntity = service.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
+        return ResponseEntity.ok().body(service.update(user, userEntity));
 
     }
 

@@ -40,7 +40,6 @@ public class UserService {
     PagedResourcesAssembler<UserDTO> assembler;
 
 
-
     @Transactional(readOnly = true)
     public PagedModel<EntityModel<UserDTO>> findAll(Pageable pageable) {
         logger.info("Buscando todos os usuários");
@@ -58,12 +57,12 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserDTO findByEmail(String email) {
-         var userEntity = repository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
-                 .map(mapper)
+        var userEntity = repository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName())
+                .map(mapper)
                 .orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado."));
-         userEntity.add(linkTo(methodOn(UserController.class).findById(userEntity.getId())).withSelfRel());
+        userEntity.add(linkTo(methodOn(UserController.class).findById(userEntity.getId())).withSelfRel());
 
-         return userEntity;
+        return userEntity;
     }
 
     @Transactional(readOnly = true)
@@ -103,7 +102,7 @@ public class UserService {
         if (request.getFirstname() == null || request.getFirstname().isEmpty()) {
             user.setFirstname(userExisting.getFirstname());
         } else {
-            user.setLastname(request.getFirstname());
+            user.setFirstname(request.getFirstname());
         }
         if (request.getPassword() == null || request.getPassword().isEmpty()) {
             user.setPassword(userExisting.getPassword());
@@ -115,7 +114,6 @@ public class UserService {
         } else {
             user.setPermissions(request.getPermissions());
         }
-
 
         return mapper.apply(repository.save(user))
                 .add(linkTo(methodOn(UserController.class).findById(request.getId())).withSelfRel());
@@ -145,13 +143,6 @@ public class UserService {
                 throw new AccessDeniedGenericException("Você não pode atualizar outro usuário!");
 
         });
-
-        userEntity.getPermissions().forEach(uAuth -> request.getPermissions().forEach(r -> {
-            if (!uAuth.getDescription().equals("ADMIN") && r.getId() == 1 && userEntity.getPermissions().stream().noneMatch(uExisting ->
-                    uExisting.getDescription().equals("ADMIN"))) {
-                throw new AccessDeniedGenericException("Você não possui permissão para atualizar um usuário com essa permissão.");
-            }
-        }));
     }
 
 

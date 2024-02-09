@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserControllerAuthorizationTest extends AbstractIntegrationTest {
+public class UserControllerAuthorizationTest extends AbstractIntegrationTest{
     private static RequestSpecification specification;
     private static RequestSpecification specificationWithoutAuthorization;
     private static ObjectMapper objectMapper;
@@ -41,7 +41,7 @@ public class UserControllerAuthorizationTest extends AbstractIntegrationTest {
     @Test
     @Order(0)
     public void authorization() throws JsonProcessingException {
-        AuthenticationRequest user = new AuthenticationRequest("Administrator", "admin123");
+        AuthenticationRequest user = new AuthenticationRequest("admin@gmail.com", "admin123");
 
         var token = given()
                 .basePath("/api/auth/v1/login")
@@ -69,7 +69,7 @@ public class UserControllerAuthorizationTest extends AbstractIntegrationTest {
     @Test
     @Order(1)
     public void authorizationWithoutAuthorization() throws JsonProcessingException {
-        AuthenticationRequest user = new AuthenticationRequest("Common User", "admin123");
+        AuthenticationRequest user = new AuthenticationRequest("user@gmail.com", "admin123");
 
         var token = given()
                 .basePath("/api/auth/v1/login")
@@ -144,7 +144,7 @@ public class UserControllerAuthorizationTest extends AbstractIntegrationTest {
         assertNotNull(userTwo.getPermissions());
 
         assertEquals("casd123s-5e6f-7g8h-9i0j-asdas3123as", userTwo.getId());
-        assertEquals("Common", userTwo.getFirstname());
+        assertEquals("User", userTwo.getFirstname());
     }
 
     @Test

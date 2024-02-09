@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class UserControllerTest { // extends AbstractIntegrationTest
+public class UserControllerTest extends AbstractIntegrationTest {
     private static RequestSpecification specification;
     private static ObjectMapper objectMapper;
     private static UserDTO user;
@@ -84,7 +84,6 @@ public class UserControllerTest { // extends AbstractIntegrationTest
                 .extract()
                 .body()
                 .asString();
-        System.out.println("Conteudo:" + content);
         UserDTO persistedUser = objectMapper.readValue(content, UserDTO.class);
         user = persistedUser;
 
@@ -119,7 +118,10 @@ public class UserControllerTest { // extends AbstractIntegrationTest
     public void testUpdate() throws JsonProcessingException {
         mockUserUpdate();
         userUpdate.setId("casd123s-5e6f-7g8h-9i0j-asdas3123as");
-        userUpdate.setFirstname("Teste Modificado");
+        userUpdate.setFirstname("Teste");
+        userUpdate.setLastname("Modificado");
+        userUpdate.setEmail("testemodificado@gmail.com");
+        userUpdate.setPassword("modificado");
 
         var content = given().spec(specification)
                 .contentType(TestConfigs.CONTENT_TYPE_JSON)
@@ -143,9 +145,9 @@ public class UserControllerTest { // extends AbstractIntegrationTest
         assertNotNull(persistedUser.getPermissions());
 
         assertEquals(persistedUser.getId(), user.getId());
-        assertEquals("Teste Modificado", persistedUser.getFirstname());
-        assertEquals("System", persistedUser.getLastname());
-        assertEquals("admin@gmail.com", persistedUser.getEmail());
+        assertEquals("Teste", persistedUser.getFirstname());
+        assertEquals("Modificado", persistedUser.getLastname());
+        assertEquals("testemodificado@gmail.com", persistedUser.getEmail());
     }
 
     @Test
@@ -173,7 +175,9 @@ public class UserControllerTest { // extends AbstractIntegrationTest
         assertNotNull(userTwo.getPermissions());
 
         assertEquals(userUpdate.getId(), userTwo.getId());
-        assertEquals("Teste Modificado", userTwo.getFirstname());
+        assertEquals("Teste", userTwo.getFirstname());
+        assertEquals("Modificado", userTwo.getLastname());
+        assertEquals("testemodificado@gmail.com", userTwo.getEmail());
     }
 
     @Test
@@ -229,6 +233,7 @@ public class UserControllerTest { // extends AbstractIntegrationTest
         userUpdate.setId(ID);
         userUpdate.setFirstname("Teste");
         userUpdate.setLastname("System");
+        userUpdate.setPassword("123123");
         userUpdate.setEmail("teste@gmail.com");
     }
 }

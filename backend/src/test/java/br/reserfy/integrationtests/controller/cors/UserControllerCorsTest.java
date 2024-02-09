@@ -43,7 +43,7 @@ public class UserControllerCorsTest extends AbstractIntegrationTest {
     @Test
     @Order(0)
     public void authorization() throws JsonProcessingException {
-        AuthenticationRequest user = new AuthenticationRequest("Administrator", "admin123");
+        AuthenticationRequest user = new AuthenticationRequest("admin@gmail.com", "admin123");
 
         var token = given()
                 .basePath("/api/auth/v1/login")

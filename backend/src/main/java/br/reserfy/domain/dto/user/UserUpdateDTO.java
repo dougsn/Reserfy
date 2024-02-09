@@ -15,13 +15,10 @@ public class UserUpdateDTO extends RepresentationModel<UserUpdateDTO> implements
     @NotBlank(message = "O campo [id] é obrigatório.")
     private String id;
     @Schema(type = "string", example = "John")
-    @NotBlank(message = "O campo [firstname] é obrigatório.")
     private String firstname;
     @Schema(type = "string", example = "Doe")
-    @NotBlank(message = "O campo [lastname] é obrigatório.")
     private String lastname;
     @Schema(type = "string", example = "johndoe@gmail.com")
-    @NotBlank(message = "O campo [email] é obrigatório.")
     @Email(message = "Digite um e-mail válido.")
     private String email;
     @Schema(type = "string", example = "!Password#")

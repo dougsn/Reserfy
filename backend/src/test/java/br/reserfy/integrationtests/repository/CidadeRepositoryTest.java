@@ -1,8 +1,8 @@
 package br.reserfy.integrationtests.repository;
 
-import br.reserfy.domain.entity.Categoria;
+import br.reserfy.domain.entity.Cidade;
 import br.reserfy.integrationtests.testcontainers.AbstractIntegrationTest;
-import br.reserfy.repository.ICategoriaRepository;
+import br.reserfy.repository.ICidadeRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -20,23 +20,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class CategoriaRepositoryTest extends AbstractIntegrationTest {
+public class CidadeRepositoryTest extends AbstractIntegrationTest {
 
     @Autowired
-    ICategoriaRepository repository;
-    private static Categoria categoria;
+    ICidadeRepository repository;
+    private static Cidade cidade;
 
     @BeforeAll
     public static void setup() {
-        categoria = new Categoria();
+        cidade = new Cidade();
     }
 
     @Test
-    public void testFindByQualificacao() {
-        var categoriaByQualificacao = repository.findByQualificacao("5 Estrelas");
+    public void testFindByNome() {
+        var categoriaByNome = repository.findByNome("Rio de Janeiro");
 
-        assertNotNull(categoriaByQualificacao.get().getQualificacao());
-        assertEquals(categoriaByQualificacao.get().getDescricao(), "Hotel 5 Estrelas");
-        assertEquals(categoriaByQualificacao.get().getUrlImagem(), "https://teste5.com");
+        assertNotNull(categoriaByNome.get().getNome());
+        assertEquals(categoriaByNome.get().getNome(), "Rio de Janeiro");
+        assertEquals(categoriaByNome.get().getEstado(), "Rio de Janeiro");
+        assertEquals(categoriaByNome.get().getPais(), "Brasil");
     }
 }
